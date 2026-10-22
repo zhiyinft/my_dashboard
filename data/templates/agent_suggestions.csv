@@ -1,0 +1,8 @@
+id,generated_at,ticker,action,target_weight,confidence,horizon,sig_alt_data,sig_pb_positioning,sig_momentum,sig_revisions,sig_valuation,rationale
+S-101,2026-10-22 07:30:00,CRM,Initiate,0.025,0.72,6-12 months,1,1,0,1,1,Web visits and app MAU both accelerating for 6 straight weeks | Hedge funds hold it at the 22nd percentile of 3y exposure: under-owned | Trades at a 15% discount to its 5-year forward P/E average
+S-102,2026-10-22 07:30:00,LLY,Add,0.065,0.69,3-6 months,1,0,1,1,-1,Script data for the GLP-1 franchise running 9pp ahead of consensus | Six upward EPS revisions in the last 30 days | Premium valuation is the main risk; size the add modestly
+S-103,2026-10-22 07:30:00,NFLX,Trim,0.025,0.61,1-3 months,-1,-1,0,0,-1,"App engagement decelerating three quarters in a row | PB long crowding at the 92nd percentile, among the highest in the book | Locks in gains ahead of the next print"
+S-104,2026-10-22 07:30:00,META,Trim,0.03,0.58,1-3 months,0,-1,1,0,0,Crowded long: 88th percentile of hedge-fund exposure | Capex guide raises margin risk into year end
+S-105,2026-10-22 07:30:00,XOM,Exit,0.0,0.55,3-6 months,-1,0,-1,-1,1,Card spend at fuel stations decelerating; refining margins rolling over | Funds the CRM initiation without raising gross exposure
+S-106,2026-10-22 07:30:00,NVDA,Add,0.0725,0.52,6-12 months,1,-1,1,1,0,Hyperscaler capex commentary implies upside to data-center revenue | Crowded and already a top-five position; check the risk limit before adding
+S-107,2026-10-22 07:30:00,UNH,Initiate,0.02,0.44,12+ months,0,1,-1,-1,1,"Deep value after the de-rating; sentiment washed out | Low conviction: revisions still negative, wait for medical-cost trend to turn"

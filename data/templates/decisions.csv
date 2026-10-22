@@ -1,0 +1,27 @@
+decision_date,ticker,action,weight_before,weight_after,rationale,decided_by
+2026-02-09,AAPL,Initiate,0.0,0.032,Valuation reset after de-rating; entry at 24x forward P/E,Investment Committee
+2026-02-09,ISRG,Exit,0.0206,0.0,Better risk/reward elsewhere; funding a new idea,Investment Committee
+2026-02-09,JPM,Trim,0.0422,0.061,Crowding elevated: PB long exposure at 88th percentile,Investment Committee
+2026-03-09,LLY,Trim,0.0668,0.069,Momentum fading; web traffic decelerating,Investment Committee
+2026-03-09,NVDA,Trim,0.1118,0.085,Position above risk limit after rally; locking in gains,Investment Committee
+2026-03-09,UBER,Exit,0.03,0.0,Thesis broken: guidance cut on weak demand,Investment Committee
+2026-03-09,XOM,Initiate,0.0,0.033,"PB data shows hedge funds underweight, room to re-rate",Investment Committee
+2026-04-09,ISRG,Initiate,0.0,0.035,Valuation reset after de-rating; entry at 27x forward P/E,Investment Committee
+2026-04-09,NFLX,Add,0.0424,0.045,Estimate revisions trending up (8 upgrades in 30 days),Investment Committee
+2026-04-09,V,Trim,0.0762,0.05,Momentum fading; web traffic decelerating,Investment Committee
+2026-05-11,ASML,Initiate,0.0,0.04,Valuation reset after de-rating; entry at 16x forward P/E,Investment Committee
+2026-05-11,AVGO,Trim,0.0637,0.055,Momentum fading; web traffic decelerating,Investment Committee
+2026-05-11,XOM,Exit,0.0366,0.0,Better risk/reward elsewhere; funding a new idea,Investment Committee
+2026-06-09,CRM,Exit,0.0542,0.0,Regulatory overhang not priced in,Investment Committee
+2026-06-09,MSFT,Trim,0.114,0.08,Momentum fading; web traffic decelerating,Investment Committee
+2026-07-09,GE,Initiate,0.0,0.04,"PB data shows hedge funds underweight, room to re-rate",Investment Committee
+2026-07-09,UBER,Initiate,0.0,0.042,Valuation reset after de-rating; entry at 17x forward P/E,Investment Committee
+2026-08-10,AAPL,Add,0.0298,0.045,Pullback to the 50-day average after a strong print,Investment Committee
+2026-08-10,LLY,Trim,0.0587,0.055,Crowding elevated: PB long exposure at 89th percentile,Investment Committee
+2026-08-10,MELI,Exit,0.0171,0.0,Thesis broken: guidance cut on weak demand,Investment Committee
+2026-08-10,UBER,Trim,0.0366,0.03,Position above risk limit after rally; locking in gains,Investment Committee
+2026-09-09,AMZN,Trim,0.0931,0.081,Position above risk limit after rally; locking in gains,Investment Committee
+2026-09-09,JPM,Trim,0.061,0.05,Momentum fading; web traffic decelerating,Investment Committee
+2026-10-09,AMZN,Trim,0.0751,0.07,Position above risk limit after rally; locking in gains,Investment Committee
+2026-10-09,MELI,Initiate,0.0,0.035,"PB data shows hedge funds underweight, room to re-rate",Investment Committee
+2026-10-09,XOM,Initiate,0.0,0.03,"PB data shows hedge funds underweight, room to re-rate",Investment Committee

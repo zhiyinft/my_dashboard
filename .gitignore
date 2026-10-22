@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.py[cod]
+.streamlit/secrets.toml
+# Live portfolio data never goes to git. See docs/DATA_HANDBOOK.md.
+data/live/
+.env
+.DS_Store
+.gstack/

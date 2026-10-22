@@ -1,0 +1,42 @@
+[server]
+runOnSave = true
+
+[client]
+toolbarMode = "viewer"
+
+[theme]
+font = "sans-serif"
+baseRadius = "small"
+showSidebarBorder = true
+headingFontSizes = ["2rem", "1.45rem", "1.15rem", "1rem", "0.9rem", "0.8rem"]
+metricValueFontSize = "1.65rem"
+
+[theme.light]
+primaryColor = "#2a78d6"
+backgroundColor = "#fcfcfb"
+secondaryBackgroundColor = "#f3f2ee"
+textColor = "#0b0b0b"
+borderColor = "#e1e0d9"
+greenColor = "#0ca30c"
+redColor = "#d03b3b"
+orangeColor = "#ec835a"
+yellowColor = "#fab219"
+chartCategoricalColors = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100", "#e87ba4", "#008300", "#6250d6", "#e34948"]
+
+[theme.light.sidebar]
+backgroundColor = "#f9f9f7"
+
+[theme.dark]
+primaryColor = "#3987e5"
+backgroundColor = "#1a1a19"
+secondaryBackgroundColor = "#262624"
+textColor = "#f0efec"
+borderColor = "#2c2c2a"
+greenColor = "#0ca30c"
+redColor = "#d03b3b"
+orangeColor = "#ec835a"
+yellowColor = "#fab219"
+chartCategoricalColors = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300", "#9085e9", "#e66767"]
+
+[theme.dark.sidebar]
+backgroundColor = "#0d0d0d"
