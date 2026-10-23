@@ -87,6 +87,18 @@ with summary:
                 icon = ":green[:material/check_circle:]" if c["ok"] else ":red[:material/cancel:]"
                 st.markdown(f"{icon} **{c['label']}** · {c['value']}")
                 st.caption(f"{'Within' if c['ok'] else 'Breaks'} limit: {c['limit']}")
+        with st.container(border=True):
+            n = config.EVENT_WARNING_BDAYS
+            risk = an.event_risk(changes.index)
+            if changes.empty:
+                st.markdown(":gray[:material/event:] **Event timing** · no trades yet")
+            elif risk.empty:
+                st.markdown(":green[:material/check_circle:] **Event timing** · clear")
+            else:
+                st.markdown(":orange[:material/warning:] **Trading into events** · " + ", ".join(
+                    f"{r.ticker} {r.event_type.lower()} in {r.bdays} trading days" for r in risk.itertuples()))
+            st.caption(f"Caution, not a limit: earnings or high-importance events within {n} trading days "
+                       "of the names traded")
 
 with right:
     section("Sector bets, now vs pro forma", "Active weight against the benchmark, percentage points")

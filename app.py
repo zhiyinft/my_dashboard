@@ -22,6 +22,7 @@ pages = {
         st.Page("views/content/presentation.py", title="Presentation", icon=":material/slideshow:"),
     ],
     "Research": [
+        st.Page("views/research/catalysts.py", title="Catalysts", icon=":material/event_upcoming:"),
         st.Page("views/research/alt_data.py", title="Alternative Data", icon=":material/insights:"),
         st.Page("views/research/pb_positioning.py", title="Prime Broker Positioning", icon=":material/account_balance:"),
     ],

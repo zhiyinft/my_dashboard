@@ -377,10 +377,71 @@ def pb_crowding() -> pd.DataFrame:
     })
 
 
+# Calendar days from today to each name's report, and when in the day it lands.
+_EARNINGS = {
+    "JPM": (-8, "Before open"), "UNH": (-7, "Before open"), "ASML": (-7, "Before open"),
+    "NFLX": (-6, "After close"), "TSM": (-6, "Before open"), "ISRG": (-1, "After close"),
+    "GE": (0, "Before open"), "MSFT": (6, "After close"), "GOOGL": (6, "After close"),
+    "V": (6, "After close"), "BA": (6, "Before open"), "META": (7, "After close"),
+    "AAPL": (8, "After close"), "AMZN": (8, "After close"), "LLY": (8, "Before open"),
+    "XOM": (9, "Before open"), "UBER": (13, "Before open"), "PFE": (13, "Before open"),
+    "MELI": (14, "After close"), "NVDA": (28, "After close"), "CRM": (42, "After close"),
+    "ADBE": (49, "After close"), "AVGO": (50, "After close"), "COST": (50, "After close"),
+    "NKE": (57, "After close"),
+}
+_EARNINGS_NOTES = {
+    "MSFT": "Azure growth vs ~38% consensus", "GOOGL": "Cloud margin and search share",
+    "META": "First look at 2027 capex", "AMZN": "AWS re-acceleration", "AAPL": "iPhone cycle commentary",
+    "NVDA": "Data-center guide; buy-side sits ~10% above consensus", "LLY": "GLP-1 scripts vs alt data",
+    "NFLX": "Engagement after the ad-tier price rise",
+}
+# (ticker or None for market-wide, type, title, days from today, importance, status, timing, note)
+_EVENTS = [
+    (None, "Macro", "FOMC rate decision", 7, "High", "Confirmed", "During market", "Futures price most of a 25 bp cut"),
+    (None, "Macro", "US payrolls", 16, "Medium", "Confirmed", "Before open", ""),
+    (None, "Macro", "US CPI", 22, "High", "Confirmed", "Before open", ""),
+    ("UNH", "Regulatory", "Medicare Advantage star ratings", 3, "Medium", "Confirmed", None, ""),
+    ("NFLX", "Product launch", "Live sports rights announcement", 10, "Low", "Estimated", None, ""),
+    ("CRM", "Conference", "Dreamforce analyst session", 12, "Medium", "Confirmed", "During market", "Agent product monetisation"),
+    ("AAPL", "Regulatory", "EU DMA compliance ruling", 18, "Medium", "Estimated", None, ""),
+    ("UBER", "Investor day", "Investor day: autonomy roadmap", 22, "Medium", "Confirmed", "During market", ""),
+    ("ASML", "Investor day", "Capital markets day", 23, "High", "Confirmed", "During market", "2030 margin targets"),
+    ("LLY", "Regulatory", "FDA decision on oral GLP-1 filing", 24, "High", "Estimated", None,
+     "Approval is consensus; label breadth is the swing factor"),
+    ("GOOGL", "Regulatory", "Search remedies appeal hearing", 26, "High", "Estimated", None, ""),
+    ("MELI", "Index change", "Index rebalance: weight increase", 30, "Low", "Estimated", "After close", ""),
+    ("META", "Regulatory", "FTC antitrust ruling", 33, "High", "Estimated", None, ""),
+    ("NVDA", "Product launch", "Next-gen GPU platform update", 35, "Medium", "Estimated", None, ""),
+    ("V", "Regulatory", "Interchange settlement hearing", 36, "Medium", "Estimated", None, ""),
+    ("AMZN", "Conference", "AWS re:Invent keynote", 40, "Medium", "Confirmed", "During market", ""),
+    ("XOM", "Investor day", "Corporate plan update", 44, "Medium", "Confirmed", "Before open", ""),
+]
+
+
+def catalysts() -> pd.DataFrame:
+    today = AS_OF + pd.offsets.BDay(1)
+
+    def on(days: int) -> pd.Timestamp:
+        d = today + pd.Timedelta(days=days)
+        return d if d.weekday() < 5 else d + pd.offsets.BDay(1)
+
+    focus = set(CURRENT_WEIGHTS) | {s[1] for s in _SUGGESTIONS}
+    rows = [{
+        "date": on(days), "ticker": t, "event_type": "Earnings", "title": "Quarterly earnings",
+        "status": "Confirmed" if days <= 45 else "Estimated", "importance": "High" if t in focus else "Medium",
+        "timing": timing, "note": _EARNINGS_NOTES.get(t, ""), "source": "Mock",
+    } for t, (days, timing) in _EARNINGS.items()]
+    rows += [{
+        "date": on(days), "ticker": t, "event_type": kind, "title": title, "status": status,
+        "importance": imp, "timing": timing, "note": note, "source": "Mock",
+    } for t, kind, title, days, imp, status, timing, note in _EVENTS]
+    return pd.DataFrame(rows).sort_values("date", ignore_index=True)
+
+
 GENERATORS = {
     "securities": securities, "prices": prices, "benchmark": benchmark,
     "benchmark_sectors": benchmark_sectors, "positions": positions, "nav": nav,
     "decisions": decisions, "agent_suggestions": agent_suggestions, "alt_data": alt_data,
     "pb_leverage": pb_leverage, "pb_sectors": pb_sectors, "pb_sector_flows": pb_sector_flows,
-    "pb_crowding": pb_crowding,
+    "pb_crowding": pb_crowding, "catalysts": catalysts,
 }

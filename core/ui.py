@@ -18,11 +18,13 @@ CSS = """
 <style>
 [data-testid='stSidebarHeader'] {height: auto;}
 [data-testid='stSidebarLogo'] {height: 4rem;}
-[class*='st-key-kpis_'], [class*='st-key-cards_'], [class*='st-key-grid_'] {display: grid !important;}
+[class*='st-key-kpis_'], [class*='st-key-cards_'], [class*='st-key-week_'], [class*='st-key-grid_'] {display: grid !important;}
 [class*='st-key-kpis_'] {grid-template-columns: repeat(auto-fit, minmax(8.25rem, 1fr));}
-[class*='st-key-cards_'] {grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));}
+[class*='st-key-cards_'] {grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));}
+[class*='st-key-week_'] {grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));}
 [class*='st-key-grid_'] {grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr));}
-[class*='st-key-kpis_'] > div, [class*='st-key-cards_'] > div, [class*='st-key-grid_'] > div {width: auto !important; min-width: 0;}
+[class*='st-key-kpis_'] > div, [class*='st-key-cards_'] > div, [class*='st-key-week_'] > div,
+[class*='st-key-grid_'] > div {width: auto !important; min-width: 0;}
 [data-testid='stMetricLabel'] *, [data-testid='stMetricDelta'] * {white-space: normal !important; overflow: visible !important;}
 [data-testid='stMetricDelta'] {height: auto !important;}
 [class*='st-key-wide_'] > div:first-child {flex: 3 1 30rem; min-width: min(100%, 30rem);}
@@ -48,7 +50,10 @@ def kpis(key: str, items: list[dict]) -> None:
 
 
 def grid(key: str, kind: str = "grid"):
-    """Horizontal container whose children wrap. kind: grid (charts), cards (small cards), wide (3:2 pair)."""
+    """Horizontal container whose children wrap.
+
+    kind: grid (charts), cards (small cards), week (five narrow day cards), wide (3:2 pair).
+    """
     return st.container(horizontal=True, gap="medium", key=f"{kind}_{key}")
 
 

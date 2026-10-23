@@ -1,0 +1,43 @@
+date,ticker,event_type,title,status,importance,timing,note,source
+2026-10-14,JPM,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-10-15,UNH,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-10-15,ASML,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-10-16,NFLX,Earnings,Quarterly earnings,Confirmed,High,After close,Engagement after the ad-tier price rise,Mock
+2026-10-16,TSM,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-10-21,ISRG,Earnings,Quarterly earnings,Confirmed,High,After close,,Mock
+2026-10-22,GE,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-10-26,UNH,Regulatory,Medicare Advantage star ratings,Confirmed,Medium,,,Mock
+2026-10-28,BA,Earnings,Quarterly earnings,Confirmed,Medium,Before open,,Mock
+2026-10-28,V,Earnings,Quarterly earnings,Confirmed,High,After close,,Mock
+2026-10-28,MSFT,Earnings,Quarterly earnings,Confirmed,High,After close,Azure growth vs ~38% consensus,Mock
+2026-10-28,GOOGL,Earnings,Quarterly earnings,Confirmed,High,After close,Cloud margin and search share,Mock
+2026-10-29,META,Earnings,Quarterly earnings,Confirmed,High,After close,First look at 2027 capex,Mock
+2026-10-29,,Macro,FOMC rate decision,Confirmed,High,During market,Futures price most of a 25 bp cut,Mock
+2026-10-30,AAPL,Earnings,Quarterly earnings,Confirmed,High,After close,iPhone cycle commentary,Mock
+2026-10-30,AMZN,Earnings,Quarterly earnings,Confirmed,High,After close,AWS re-acceleration,Mock
+2026-10-30,LLY,Earnings,Quarterly earnings,Confirmed,High,Before open,GLP-1 scripts vs alt data,Mock
+2026-11-02,XOM,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-11-02,NFLX,Product launch,Live sports rights announcement,Estimated,Low,,,Mock
+2026-11-03,CRM,Conference,Dreamforce analyst session,Confirmed,Medium,During market,Agent product monetisation,Mock
+2026-11-04,PFE,Earnings,Quarterly earnings,Confirmed,Medium,Before open,,Mock
+2026-11-04,UBER,Earnings,Quarterly earnings,Confirmed,High,Before open,,Mock
+2026-11-05,MELI,Earnings,Quarterly earnings,Confirmed,High,After close,,Mock
+2026-11-09,,Macro,US payrolls,Confirmed,Medium,Before open,,Mock
+2026-11-09,AAPL,Regulatory,EU DMA compliance ruling,Estimated,Medium,,,Mock
+2026-11-13,,Macro,US CPI,Confirmed,High,Before open,,Mock
+2026-11-13,UBER,Investor day,Investor day: autonomy roadmap,Confirmed,Medium,During market,,Mock
+2026-11-16,LLY,Regulatory,FDA decision on oral GLP-1 filing,Estimated,High,,Approval is consensus; label breadth is the swing factor,Mock
+2026-11-16,ASML,Investor day,Capital markets day,Confirmed,High,During market,2030 margin targets,Mock
+2026-11-17,GOOGL,Regulatory,Search remedies appeal hearing,Estimated,High,,,Mock
+2026-11-19,NVDA,Earnings,Quarterly earnings,Confirmed,High,After close,Data-center guide; buy-side sits ~10% above consensus,Mock
+2026-11-23,MELI,Index change,Index rebalance: weight increase,Estimated,Low,After close,,Mock
+2026-11-24,META,Regulatory,FTC antitrust ruling,Estimated,High,,,Mock
+2026-11-26,NVDA,Product launch,Next-gen GPU platform update,Estimated,Medium,,,Mock
+2026-11-27,V,Regulatory,Interchange settlement hearing,Estimated,Medium,,,Mock
+2026-12-01,AMZN,Conference,AWS re:Invent keynote,Confirmed,Medium,During market,,Mock
+2026-12-03,CRM,Earnings,Quarterly earnings,Confirmed,High,After close,,Mock
+2026-12-07,XOM,Investor day,Corporate plan update,Confirmed,Medium,Before open,,Mock
+2026-12-10,ADBE,Earnings,Quarterly earnings,Estimated,Medium,After close,,Mock
+2026-12-11,COST,Earnings,Quarterly earnings,Estimated,High,After close,,Mock
+2026-12-11,AVGO,Earnings,Quarterly earnings,Estimated,High,After close,,Mock
+2026-12-18,NKE,Earnings,Quarterly earnings,Estimated,Medium,After close,,Mock

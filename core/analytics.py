@@ -216,6 +216,64 @@ def suggestions() -> pd.DataFrame:
     return s.sort_values("confidence", ascending=False, ignore_index=True)
 
 
+GROUPS = ("Market", "Holding", "Agent idea", "Watchlist")
+
+
+def today() -> pd.Timestamp:
+    return pd.Timestamp.today().normalize()
+
+
+def catalysts() -> pd.DataFrame:
+    """Catalyst calendar with who each event matters to, days until it, and the price reaction once past."""
+    c = load("catalysts").copy()
+    sec = securities()
+    w = holdings()["weight"]
+    ideas = set(suggestions()["ticker"])
+    c["name"] = c["ticker"].map(sec["name"])
+    c["weight"] = c["ticker"].map(w).fillna(0.0)
+    c["group"] = np.select([c["ticker"].isna(), c["weight"] > 0, c["ticker"].isin(ideas)], GROUPS[:3], GROUPS[3])
+    c["days"] = (c["date"] - today()).dt.days
+    c["bdays"] = np.busday_count(today().date(), c["date"].dt.date.to_numpy().astype("datetime64[D]"))
+
+    # Reaction: the close-to-close move on the first session that could trade on the news.
+    px, bench = prices_wide(), benchmark()
+    react = c["date"].mask(c["timing"].eq("After close").fillna(False), c["date"] + pd.offsets.BDay(1))
+    move, excess = [], []
+    for t, d in zip(c["ticker"], react):
+        i = px.index.searchsorted(d)
+        if pd.isna(t) or t not in px or i == 0 or i >= len(px.index):
+            move.append(np.nan)
+            excess.append(np.nan)
+            continue
+        r = px[t].iloc[i] / px[t].iloc[i - 1] - 1
+        b = bench.asof(px.index[i]) / bench.asof(px.index[i - 1]) - 1
+        move.append(r)
+        excess.append(r - b)
+    c["move"], c["excess"] = move, excess
+    c["group"] = pd.Categorical(c["group"], GROUPS, ordered=True)
+    c["importance"] = pd.Categorical(c["importance"], ("High", "Medium", "Low"), ordered=True)
+    return c.sort_values(["date", "importance", "group"], ignore_index=True)
+
+
+def upcoming(days: int) -> pd.DataFrame:
+    c = catalysts()
+    return c[(c["days"] >= 0) & (c["days"] <= days)]
+
+
+def next_event_labels() -> pd.Series:
+    """Ticker -> its next event, e.g. 'Earnings · 28 Oct'."""
+    c = catalysts()
+    nxt = c[(c["days"] >= 0) & c["ticker"].notna()].groupby("ticker", observed=True).first()
+    return pd.Series([f"{k} · {d:%d %b}" for k, d in zip(nxt["event_type"], nxt["date"])], index=nxt.index)
+
+
+def event_risk(tickers, bdays: int = config.EVENT_WARNING_BDAYS) -> pd.DataFrame:
+    """Earnings or high-importance events for these names within the next few trading days."""
+    c = catalysts()
+    near = c["ticker"].isin(list(tickers)) & c["bdays"].between(0, bdays)
+    return c[near & ((c["event_type"] == "Earnings") | (c["importance"] == "High"))]
+
+
 def pre_trade_checks(target: pd.Series) -> list[dict]:
     """Pro Forma limit checks on a ticker -> weight series."""
     lim = config.LIMITS

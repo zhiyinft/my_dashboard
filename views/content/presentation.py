@@ -24,6 +24,14 @@ def takeaway(chart_id: str) -> str:
     if chart_id == "decisions":
         d = an.decision_outcomes()
         return f"{len(d)} trades across {d['decision_date'].nunique()} decisions, with a {d['worked'].mean():.0%} hit rate."
+    if chart_id == "catalysts":
+        ev = an.upcoming(30)
+        rep = ev[(ev["group"] == "Holding") & (ev["event_type"] == "Earnings")]
+        if rep.empty:
+            return "No holdings report in the next 30 days."
+        first = rep.iloc[0]
+        return (f"{len(rep)} holdings report in the next 30 days ({rep['weight'].sum():.0%} of NAV); "
+                f"first up is {first['ticker']} on {first['date']:%a %d %b}.")
     if chart_id == "alt_heatmap":
         s = an.alt_signals()
         acc = ", ".join(s.index[s["signal"] == "Accelerating"]) or "none"

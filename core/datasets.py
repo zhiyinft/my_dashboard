@@ -16,6 +16,10 @@ SECTORS = (
 ACTIONS = ("Initiate", "Add", "Trim", "Exit")
 ALT_METRICS = ("Card spend", "App MAU", "Web visits")
 SIGNALS = ("sig_alt_data", "sig_pb_positioning", "sig_momentum", "sig_revisions", "sig_valuation")
+EVENT_TYPES = ("Earnings", "Investor day", "Product launch", "Regulatory", "Index change", "Conference",
+               "Lock-up expiry", "Macro")
+IMPORTANCE = ("High", "Medium", "Low")
+TIMINGS = ("Before open", "During market", "After close")
 
 
 @dataclass(frozen=True)
@@ -173,5 +177,20 @@ DATASETS = {d.name: d for d in [
             Col("flow_z", "float", required=False, min=-10, max=10, note="Week-over-week net buying z-score"),
         ),
         ("Prime Broker Positioning", "Live Portfolio"),
+    ),
+    Dataset(
+        "catalysts", "Catalyst calendar", "Daily", ("date", "ticker", "event_type"),
+        (
+            Col("date", "date", note="Event date"),
+            Col("ticker", "str", required=False, note="Blank for market-wide events such as FOMC"),
+            Col("event_type", "str", choices=EVENT_TYPES),
+            Col("title", "str", note="Short description, e.g. Q3 earnings"),
+            Col("status", "str", choices=("Confirmed", "Estimated")),
+            Col("importance", "str", choices=IMPORTANCE),
+            Col("timing", "str", required=False, choices=TIMINGS),
+            Col("note", "str", required=False, note="What to watch"),
+            Col("source", "str", required=False),
+        ),
+        ("Catalysts", "Live Portfolio", "Pro Forma", "Agent Suggestions", "Slides & Charts"),
     ),
 ]}

@@ -20,3 +20,8 @@ LIMITS = {
 
 # A holding counts as crowded at or above this PB crowding percentile.
 CROWDED_PCT = 85
+
+# Catalysts: Pro Forma warns about trades this many trading days before an earnings
+# or high-importance event; Live Portfolio's attention card looks this many days ahead.
+EVENT_WARNING_BDAYS = 5
+ATTENTION_DAYS = 7

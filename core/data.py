@@ -152,14 +152,18 @@ def validate() -> int:
     return 1 if failed or cross else 0
 
 
+# Long panels where the latest period alone is a complete example; calendars keep every row.
+LATEST_PERIOD_ONLY = ("prices", "positions", "alt_data", "pb_sector_flows")
+
+
 def write_templates(rows: int = 12) -> None:
     TEMPLATE_DIR.mkdir(parents=True, exist_ok=True)
     for name, spec in DATASETS.items():
         df = mock_data.GENERATORS[name]()
         time = next((c for c in spec.key if c in ("date", "week")), None)
-        if time and len(spec.key) > 1:
+        if name in LATEST_PERIOD_ONLY:
             df = df[df[time] == df[time].max()]
-        elif time:
+        elif time and len(spec.key) == 1:
             df = df.tail(rows)
         out = df[[c.name for c in spec.columns if c.name in df]].copy()
         for col in spec.columns:

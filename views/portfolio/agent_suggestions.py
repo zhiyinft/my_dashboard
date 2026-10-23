@@ -2,6 +2,7 @@ import numpy as np
 import streamlit as st
 
 from core import analytics as an
+from core import config
 from core.datasets import ACTIONS, SIGNALS
 from core.ui import ACTION_COLOR, grid, header, kpis, section, table_height
 
@@ -33,6 +34,11 @@ with st.container(horizontal=True, vertical_alignment="bottom"):
     st.space("stretch")
     st.page_link("views/portfolio/pro_forma.py", label="Open Pro Forma", icon=":material/tune:")
 
+cal = an.catalysts()
+next_ev = cal[(cal["days"] >= 0) & cal["ticker"].notna()].groupby("ticker").first()
+sugg["next_event"] = [f"{next_ev.at[t, 'event_type']} in {next_ev.at[t, 'days']}d" if t in next_ev.index else ""
+                      for t in sugg["ticker"]]
+
 state_for = {"To review": "pending", "Accepted": "accepted", "Dismissed": "dismissed"}
 shown = sugg[
     sugg["action"].isin(actions or [])
@@ -41,11 +47,12 @@ shown = sugg[
 ]
 
 section("Overview", f"{len(shown)} of {len(sugg)} ideas, highest confidence first · run {sugg['generated_at'].max():%d %b %H:%M}")
-overview = shown.set_index("ticker")[["action", "current_weight", "target_weight", "confidence", "support", "against", "status", "name"]]
+overview = shown.set_index("ticker")[["action", "current_weight", "target_weight", "confidence", "support", "against",
+                                      "status", "next_event", "name"]]
 overview = overview.assign(
     signals=[f"{s} for · {a} against" for s, a in zip(overview["support"], overview["against"])],
     status=overview["status"].map({"pending": "To review", "accepted": "✓ Accepted", "dismissed": "Dismissed"}),
-)[["action", "current_weight", "target_weight", "confidence", "signals", "status", "name"]]
+)[["action", "current_weight", "target_weight", "confidence", "signals", "status", "next_event", "name"]]
 st.dataframe(
     overview,
     width="stretch",
@@ -59,6 +66,7 @@ st.dataframe(
         "confidence": st.column_config.ProgressColumn("Confidence", format="percent", min_value=0, max_value=1),
         "signals": "Signals",
         "status": "Status",
+        "next_event": "Next event",
     },
 )
 
@@ -75,6 +83,11 @@ with grid("ideas"):
                 elif s.status == "dismissed":
                     st.badge("Dismissed", icon=":material/close:", color="gray")
             st.markdown(f"Weight **{s.current_weight:.1%} → {s.target_weight:.1%}** ({s.change * 100:+.1f} pp) · {s.horizon}")
+            if s.ticker in next_ev.index:
+                e = next_ev.loc[s.ticker]
+                soon = e["bdays"] <= config.EVENT_WARNING_BDAYS
+                st.caption(f"{':orange[:material/warning:]' if soon else ':material/event_upcoming:'} "
+                           f"Next event: {e['title']} {e['date']:%a %d %b}, in {e['days']} days")
             st.progress(s.confidence, text=f"Confidence {s.confidence:.0%} · {s.support} of {len(SIGNALS)} signals support")
             st.markdown("\n".join(f"- {p}" for p in s.points))
             with st.container(horizontal=True, gap="small"):

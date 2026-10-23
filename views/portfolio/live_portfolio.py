@@ -46,6 +46,8 @@ pending = sugg[sugg["id"].map(st.session_state["suggestion_status"]) == "pending
 dec = an.decision_outcomes()
 last_d = dec["decision_date"].max()
 last = dec[dec["decision_date"] == last_d]
+events = an.upcoming(config.ATTENTION_DAYS)
+book_events = events[events["group"] == "Holding"]
 
 with grid("attention", "cards"):
     with st.container(border=True):
@@ -68,6 +70,12 @@ with grid("attention", "cards"):
         st.caption(f"{', '.join(f'{a} {t}' for a, t in zip(last['action'], last['ticker']))} · "
                    f"{last['worked'].mean():.0%} working so far")
         st.page_link("views/portfolio/decision_date.py", label="Decision date", icon=":material/arrow_forward:")
+    with st.container(border=True):
+        st.markdown(f":blue[:material/event_upcoming:] **{len(book_events)} holding events** "
+                    f"in the next {config.ATTENTION_DAYS} days")
+        st.caption(", ".join(f"{r.ticker} {r.event_type.lower()} {r.date:%a}" for r in book_events.itertuples())
+                   or "Nothing scheduled for our holdings")
+        st.page_link("views/research/catalysts.py", label="Catalysts", icon=":material/arrow_forward:")
 
 with grid("perf", "wide"):
     with st.container():
@@ -86,7 +94,9 @@ with grid("bets"):
         chart(*charts.contributors(base + pd.offsets.BDay(1)), key="live_contrib")
 
 section("Holdings", f"{len(h)} positions, largest first")
-cols = ["name", "weight", "day_change", "day_pnl", "total_return", "total_pnl", "market_value", "last", "sector", "trend_3m"]
+cols = ["name", "weight", "day_change", "day_pnl", "total_return", "total_pnl", "market_value", "next_event", "last",
+        "sector", "trend_3m"]
+h = h.assign(next_event=an.next_event_labels().reindex(h.index).fillna(""))
 table = h[[c for c in cols if c in h]].assign(day_pnl=h["day_pnl"] / 1e3, market_value=h["market_value"] / 1e6)
 if "total_pnl" in table:
     table["total_pnl"] = table["total_pnl"] / 1e6
@@ -106,6 +116,7 @@ st.dataframe(
         "total_return": st.column_config.NumberColumn("Since entry", format="percent", help="Return against average cost"),
         "total_pnl": st.column_config.NumberColumn("P&L $M", format="%+.2f", help="Unrealised P&L against average cost"),
         "market_value": st.column_config.NumberColumn("Value $M", format="%.2f"),
+        "next_event": st.column_config.TextColumn("Next event"),
         "trend_3m": st.column_config.LineChartColumn("3 months"),
     },
 )

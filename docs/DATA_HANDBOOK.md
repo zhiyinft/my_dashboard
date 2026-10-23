@@ -67,13 +67,14 @@ table names and connection details, and only the loader needs to change. The pag
 
 | Page | Datasets it reads | What the app calculates for you |
 |---|---|---|
-| **Live Portfolio** | positions, nav, prices, benchmark, benchmark_sectors, securities. The attention strip also reads pb_crowding, alt_data, agent_suggestions and decisions | Returns, weights, day P&L, sector bets, contributions, beta |
+| **Live Portfolio** | positions, nav, prices, benchmark, benchmark_sectors, securities. The attention strip also reads pb_crowding, alt_data, agent_suggestions, decisions and catalysts; the holdings table shows each name's next catalyst | Returns, weights, day P&L, sector bets, contributions, beta |
 | **Decision Date** | decisions, positions, nav, prices, benchmark, securities | Return since each decision, value added vs benchmark, hit rate, book before/after |
 | **Portfolio (TBD)** | None yet | |
-| **Pro Forma** | positions, nav, prices, securities, benchmark_sectors, agent_suggestions | Pro forma weights, cash, beta, concentration, pre-trade checks, trade list |
-| **Agent Suggestions** | agent_suggestions, plus positions, nav, prices for current weights | Weight change, how many signals support each idea |
+| **Pro Forma** | positions, nav, prices, securities, benchmark_sectors, agent_suggestions, catalysts | Pro forma weights, cash, beta, concentration, pre-trade checks, event-timing caution, trade list |
+| **Agent Suggestions** | agent_suggestions, catalysts, plus positions, nav, prices for current weights | Weight change, how many signals support each idea, next event per idea |
 | **Slides & Charts** | Whatever the chosen charts use; no extra data | |
 | **Presentation** | Same as Slides & Charts | One-line takeaway per slide |
+| **Catalysts** | catalysts, securities, agent_suggestions, plus positions, nav, prices for our weights | Who each event matters to, days until it, price reaction to past events vs benchmark |
 | **Alternative Data** | alt_data, securities, plus positions for our weights | Acceleration signal per name |
 | **Prime Broker Positioning** | pb_leverage, pb_sectors, pb_sector_flows, pb_crowding, plus positions and benchmark_sectors for our exposure | Crowded-holding flags, our active weight per sector |
 
@@ -91,7 +92,8 @@ date comes from NAV. So the core book goes live first, and each later step adds 
 | 2. Decisions | decisions | Decision Date |
 | 3. Agent | agent_suggestions | Agent Suggestions |
 | 4. Alt data | alt_data | Alternative Data |
-| 5. PB data | pb_leverage, pb_sectors, pb_sector_flows, pb_crowding | Prime Broker Positioning, then the full attention strip |
+| 5. PB data | pb_leverage, pb_sectors, pb_sector_flows, pb_crowding | Prime Broker Positioning |
+| 6. Catalysts | catalysts | Catalysts, the Pro Forma event check, then the full attention strip |
 
 Between steps, the pages not yet switched keep mock data, which uses mock tickers. Make sure
 `securities` covers every ticker those mock files mention (see `data/templates/securities.csv`),
@@ -298,6 +300,33 @@ Source: prime broker crowding reports, plus exchange short-interest data. Latest
 **Prepare:** cover at least every current holding. A holding counts as crowded at the 85th
 percentile or above (`CROWDED_PCT` in `core/config.py`).
 
+### 4.14 `catalysts`: catalyst calendar
+
+Typical source: an earnings and corporate-events calendar (Bloomberg EVTS, FactSet Events,
+Wall Street Horizon), plus analysts' own notes for regulatory and product events. Refresh daily,
+as dates move from estimated to confirmed. Key: `date, ticker, event_type`.
+History: the last two weeks (for the price-reaction table) and the next 90 days.
+
+| Column | Type | Required | Notes |
+|---|---|---|---|
+| date | date | yes | Event date |
+| ticker | text | no | Blank for market-wide events such as FOMC or CPI |
+| event_type | text | yes | `Earnings`, `Investor day`, `Product launch`, `Regulatory`, `Index change`, `Conference`, `Lock-up expiry` or `Macro` |
+| title | text | yes | Short description, e.g. `Q3 earnings`, `FDA decision on oral GLP-1 filing` |
+| status | text | yes | `Confirmed` or `Estimated` |
+| importance | text | yes | `High`, `Medium` or `Low`; drives marker size and the event-timing check |
+| timing | text | no | `Before open`, `During market` or `After close` |
+| note | text | no | What to watch, e.g. `Azure growth vs ~38% consensus` |
+| source | text | no | Where the date came from |
+
+**Prepare:** cover at least every holding, every name in the current agent run and the watchlist.
+Fill `timing` for earnings whenever it is known. The app measures the price reaction on the first
+session that could trade on the news, which for an after-close report is the next day. Set
+`importance` deliberately, because two things depend on it. Pro Forma cautions on trades within
+five trading days of earnings or any `High` event, and the Live Portfolio attention card lists
+our holdings' events in the next seven days. The app decides who an event matters to (holding,
+agent idea, watchlist or market) from our current book, so that does not go in the file.
+
 ---
 
 ## 5. Checking the files
@@ -341,6 +370,8 @@ run only in the validator, so run it after every delivery.
 | `LIMITS["max_sector_active"]` | ±15 pp vs benchmark | Pro Forma check |
 | `LIMITS["min_positions"]`, `["max_positions"]` | 15, 30 | Pro Forma check |
 | `CROWDED_PCT` | 85 | Crowded flags on Live Portfolio and PB Positioning |
+| `EVENT_WARNING_BDAYS` | 5 trading days | Pro Forma event-timing caution, Agent Suggestions event flags |
+| `ATTENTION_DAYS` | 7 days | Live Portfolio attention card, Catalysts warning |
 
 ---
 
@@ -355,3 +386,5 @@ run only in the validator, so run it after every delivery.
    accepted ideas be saved, or sent to the OMS?
 6. **Non-USD holdings.** Who supplies the FX rates, and should the app show local-currency returns?
 7. **Delivery.** Files in `data/live/`, a shared drive, or database views such as Snowflake?
+8. **Catalyst calendar.** Which vendor supplies earnings dates, and who adds regulatory, product
+   and macro events and sets their importance?

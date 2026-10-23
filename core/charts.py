@@ -212,6 +212,51 @@ def pb_flow_heatmap() -> tuple[go.Figure, pd.DataFrame]:
     return fig, z
 
 
+def group_colors() -> dict:
+    """Who an event matters to. Scatter forms validate only the first three slots, so the rest is gray."""
+    t = tokens()
+    return {"Market": t["series"][2], "Holding": t["series"][0], "Agent idea": t["series"][1], "Watchlist": t["muted"]}
+
+
+def catalyst_timeline(events: pd.DataFrame, start: pd.Timestamp, end: pd.Timestamp) -> tuple[go.Figure, pd.DataFrame]:
+    """One row per name, one marker per event: color = who it matters to, circle = earnings, size = importance."""
+    t = tokens()
+    ev = events.assign(row=events["ticker"].fillna("Market"))
+    order = ev.sort_values(["group", "weight"], ascending=[True, False]).drop_duplicates("row")["row"].tolist()
+    colors = group_colors()
+    size = {"High": 15, "Medium": 11, "Low": 8}
+    fig = go.Figure()
+    for g in an.GROUPS:
+        sub = ev[ev["group"] == g]
+        if sub.empty:
+            continue
+        # Legend-only swatch, so the legend shows color = group rather than the first event's shape.
+        fig.add_scatter(x=[None], y=[None], mode="markers", name=g, legendgroup=g,
+                        marker=dict(color=colors[g], size=10, symbol="square"))
+        fig.add_scatter(
+            x=sub["date"], y=sub["row"], mode="markers", name=g, legendgroup=g, showlegend=False,
+            marker=dict(color=colors[g], size=sub["importance"].astype(str).map(size).tolist(),
+                        symbol=["circle" if e == "Earnings" else "diamond" for e in sub["event_type"]],
+                        line=dict(width=2, color=t["surface"])),
+            customdata=sub[["title", "event_type"]].assign(importance=sub["importance"].astype(str)).to_numpy(),
+            hovertemplate="<b>%{y}</b> · %{x|%a %d %b}<br>%{customdata[0]}<br>%{customdata[1]} · %{customdata[2]} importance<extra></extra>",
+        )
+    fig.add_vline(x=start, line_width=1, line_color=t["baseline"])
+    style(fig, 70 + 26 * len(order))
+    # Explicit axis types: the empty legend swatches come first and would otherwise make both axes numeric.
+    fig.update_xaxes(type="date", range=[start - pd.Timedelta(days=1), end + pd.Timedelta(days=1)], tickformat="%d %b",
+                     showgrid=True, gridcolor=t["grid"])
+    fig.update_yaxes(type="category", categoryorder="array", categoryarray=order[::-1], showgrid=True,
+                     gridcolor=t["grid"], automargin=True)
+    return fig, ev[["date", "row", "event_type", "title", "importance", "group"]].set_index("date")
+
+
+def _holding_catalysts(days: int = 30) -> tuple[go.Figure, pd.DataFrame]:
+    ev = an.upcoming(days)
+    ev = ev[ev["group"].isin(["Market", "Holding"])]
+    return catalyst_timeline(ev, an.today(), an.today() + pd.Timedelta(days=days))
+
+
 def _ytd() -> pd.Timestamp:
     return pd.Timestamp(an.as_of().year, 1, 1)
 
@@ -229,6 +274,9 @@ LIBRARY = [
     {"id": "decisions", "title": "NAV and decision dates", "category": "Portfolio",
      "description": "Portfolio NAV with each investment-committee decision marked.",
      "build": lambda: nav_with_decisions()},
+    {"id": "catalysts", "title": "Catalysts, next 30 days", "category": "Research",
+     "description": "Upcoming events for our holdings and the market. Circles are earnings; larger is more important.",
+     "build": lambda: _holding_catalysts()},
     {"id": "alt_heatmap", "title": "Alternative data: latest YoY", "category": "Research",
      "description": "4-week average YoY growth by ticker across card spend, app MAU and web visits.",
      "build": lambda: alt_heatmap()},
